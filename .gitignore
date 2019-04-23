@@ -1,0 +1,9 @@
+.nuxt
+node_modules
+package-lock.json
+.vscode
+.idea
+.atom
+./vscode
+node_modules/*
+.vscode/*
