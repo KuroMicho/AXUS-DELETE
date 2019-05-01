@@ -35,6 +35,9 @@
 
             <b-button variant="danger" type="button" @click="eliminar(row.item.id)">Eliminar</b-button>
           </template>
+          <template slot="image" slot-scope="data">
+            <b-img width="220" :src="`http://localhost:4000/images/${data.item.image}`"></b-img>
+          </template>
         </b-table>
 
         <b-pagination
@@ -64,6 +67,10 @@ export default {
   data() {
     return {
       fields: {
+        image: {
+          label: "Imagen",
+          sortable: false
+        },
         id: {
           label: "ID"
         },

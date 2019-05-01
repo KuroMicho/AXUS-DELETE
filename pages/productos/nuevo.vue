@@ -8,7 +8,20 @@
     <div class="row">
       <div class="col-sm-12">
         <b-form-group label="Imagen:" label-for="imagen">
-          <b-form-file id="imagen" placeholder="Cargar Imagen" drop-placeholder="Cargar Imagen"/>
+          <b-form-input
+            @click="pickFile"
+            v-model="form.name_image"
+            placeholder="Cargar imagen"
+          ></b-form-input>
+
+          <input
+            type="file"
+            style="display: none"
+            ref="image"
+            accept="image/*"
+            @change="onFilePicked"
+          >
+
         </b-form-group>
 
         <b-form-group label="Nombre:" label-for="nombre">
@@ -40,6 +53,13 @@
             placeholder="Ingresa la cantidad disponible del producto"
           />
         </b-form-group>
+        
+        <b-form-group label="Categoria:" label-for="categoria">
+           <b-form-select v-model="form.categoria_id" :options="categorias"
+              value-field="id" text-field="name">
+           </b-form-select>
+        </b-form-group>
+
       </div>
     </div>
 
@@ -57,13 +77,25 @@
 </template>
 
 <script>
+const URL_CATEGORIES = "http://localhost:4000/api/categorias?pagination=false";
 export default {
+  asyncData({ $axios }){
+    return $axios.get(URL_CATEGORIES).then(categorias => {
+      
+      return {
+        categorias: categorias.data
+      }
+    })
+  },
   data(){
     return {
       form: {
         Name: '',
         Amount: '',
-        Price: ''
+        Price: '',
+        name_image: '',
+        image: '',
+        categoria_id: ''
       },
       guardando: false
     }
@@ -75,8 +107,23 @@ export default {
         this.$router.push({path: '/productos'})
       })
     },
-    
-
+    pickFile() {
+      this.$refs.image.click();
+    },
+    onFilePicked(e) {
+      const files = e.target.files;
+      if (files[0] !== undefined) {
+        this.form.name_image = files[0].name;
+        if (this.form.name_image.lastIndexOf(".") <= 0) {
+          return;
+        }
+        const fr = new FileReader();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener("load", () => {
+          this.form.image = fr.result;
+        });
+      }
+    }
   }
 }
 </script>
